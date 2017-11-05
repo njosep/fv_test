@@ -1,0 +1,175 @@
+05/11/2017 21:53:28 devpinoyLogger Test Environment Set up
+05/11/2017 21:53:28 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:53:28 devpinoyLogger Executing Scenario : User Logs in with Valid Credentials
+05/11/2017 21:53:29 devpinoyLogger FV launched Succesfully
+05/11/2017 21:53:29 devpinoyLogger Email Entered : 
+05/11/2017 21:53:29 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:53:30 devpinoyLogger Password Entered :
+05/11/2017 21:53:30 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:53:30 devpinoyLogger Login Button Clicked
+05/11/2017 21:53:31 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:53:31 devpinoyLogger User Name on Home Page : Nidhin Joseph
+05/11/2017 21:53:33 devpinoyLogger Logout Button Clicked
+05/11/2017 21:53:33 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:53:33 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:53:52 devpinoyLogger Test Environment Set up
+05/11/2017 21:53:52 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:53:52 devpinoyLogger Executing Scenario : User tries to Login with Invalid Credentials
+05/11/2017 21:53:52 devpinoyLogger FV launched Succesfully
+05/11/2017 21:53:53 devpinoyLogger Email Entered : 
+05/11/2017 21:53:53 devpinoyLogger [Email, nidhinjos1@gmail.com]
+05/11/2017 21:53:53 devpinoyLogger Password Entered :
+05/11/2017 21:53:53 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:53:53 devpinoyLogger Login Button Clicked
+05/11/2017 21:53:54 devpinoyLogger Asserting  Error Message :Unauthorized: your email or password are incorrect
+05/11/2017 21:53:54 devpinoyLogger Expected Error Message Dispalyed
+05/11/2017 21:53:54 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:53:54 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:54:04 devpinoyLogger Test Environment Set up
+05/11/2017 21:54:04 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:54:04 devpinoyLogger Executing Scenario : Logged in User Closes Browesr and Launches it Again
+05/11/2017 21:54:05 devpinoyLogger FV launched Succesfully
+05/11/2017 21:54:05 devpinoyLogger Email Entered : 
+05/11/2017 21:54:05 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:54:05 devpinoyLogger Password Entered :
+05/11/2017 21:54:05 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:54:05 devpinoyLogger Login Button Clicked
+05/11/2017 21:54:07 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:54:07 devpinoyLogger User Name on Home Page : Nidhin Joseph
+05/11/2017 21:54:19 devpinoyLogger Verified User is prompted to Login again
+05/11/2017 21:54:19 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:54:19 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:54:32 devpinoyLogger Test Environment Set up
+05/11/2017 21:54:32 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:54:32 devpinoyLogger Executing Scenario : User Updates Name and Logs Out
+05/11/2017 21:54:32 devpinoyLogger FV launched Succesfully
+05/11/2017 21:54:33 devpinoyLogger Email Entered : 
+05/11/2017 21:54:33 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:54:33 devpinoyLogger Password Entered :
+05/11/2017 21:54:33 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:54:33 devpinoyLogger Login Button Clicked
+05/11/2017 21:54:35 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:54:35 devpinoyLogger Name Selected
+05/11/2017 21:54:38 devpinoyLogger First Name Entered : 
+05/11/2017 21:54:38 devpinoyLogger [FName, Joss]
+05/11/2017 21:54:40 devpinoyLogger Last Name Entered : 
+05/11/2017 21:54:40 devpinoyLogger [LName, Sheldon]
+05/11/2017 21:54:40 devpinoyLogger Done Button Clicked
+05/11/2017 21:54:44 devpinoyLogger User Name on Home Page : Joss Sheldon
+05/11/2017 21:54:44 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:54:44 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:54:57 devpinoyLogger Test Environment Set up
+05/11/2017 21:54:57 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:54:57 devpinoyLogger Executing Scenario : User Logs in and updates the Name Back to Original
+05/11/2017 21:54:57 devpinoyLogger FV launched Succesfully
+05/11/2017 21:54:57 devpinoyLogger Email Entered : 
+05/11/2017 21:54:57 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:54:57 devpinoyLogger Password Entered :
+05/11/2017 21:54:57 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:54:57 devpinoyLogger Login Button Clicked
+05/11/2017 21:54:58 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:55:02 devpinoyLogger User Name on Home Page : Joss Sheldon
+05/11/2017 21:55:02 devpinoyLogger Name Selected
+05/11/2017 21:55:05 devpinoyLogger First Name Entered : 
+05/11/2017 21:55:05 devpinoyLogger [FName, Nidhin]
+05/11/2017 21:55:07 devpinoyLogger Last Name Entered : 
+05/11/2017 21:55:07 devpinoyLogger [LName, Joseph]
+05/11/2017 21:55:07 devpinoyLogger Done Button Clicked
+05/11/2017 21:55:11 devpinoyLogger User Name on Home Page : Nidhin Joseph
+05/11/2017 21:55:11 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:55:11 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:55:21 devpinoyLogger Test Environment Set up
+05/11/2017 21:55:21 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:55:21 devpinoyLogger Executing Scenario : User Sets a 5 minute Time Notification for the First Child
+05/11/2017 21:55:22 devpinoyLogger FV launched Succesfully
+05/11/2017 21:55:22 devpinoyLogger Email Entered : 
+05/11/2017 21:55:22 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:55:22 devpinoyLogger Password Entered :
+05/11/2017 21:55:22 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:55:22 devpinoyLogger Login Button Clicked
+05/11/2017 21:55:24 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:55:25 devpinoyLogger First Student Selected
+05/11/2017 21:55:27 devpinoyLogger Time Based Notification Screen launched 
+05/11/2017 21:55:28 devpinoyLogger Time Based Notification set for : Five minutes
+05/11/2017 21:55:28 devpinoyLogger Notification Setup Completed
+05/11/2017 21:55:30 devpinoyLogger Time Based Notification Screen launched 
+05/11/2017 21:55:30 devpinoyLogger Selected Radio Button Verified  : Five
+05/11/2017 21:55:30 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:55:30 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:55:43 devpinoyLogger Test Environment Set up
+05/11/2017 21:55:43 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:55:43 devpinoyLogger Executing Scenario : User Sets a 10 minute Time Notification for the First Child
+05/11/2017 21:55:43 devpinoyLogger FV launched Succesfully
+05/11/2017 21:55:43 devpinoyLogger Email Entered : 
+05/11/2017 21:55:43 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:55:43 devpinoyLogger Password Entered :
+05/11/2017 21:55:43 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:55:44 devpinoyLogger Login Button Clicked
+05/11/2017 21:55:46 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:55:46 devpinoyLogger First Student Selected
+05/11/2017 21:55:48 devpinoyLogger Time Based Notification Screen launched 
+05/11/2017 21:55:48 devpinoyLogger Time Based Notification set for : Ten minutes
+05/11/2017 21:55:48 devpinoyLogger Notification Setup Completed
+05/11/2017 21:55:50 devpinoyLogger Time Based Notification Screen launched 
+05/11/2017 21:55:51 devpinoyLogger Selected Radio Button Verified  : Ten
+05/11/2017 21:55:51 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:55:51 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:01 devpinoyLogger Test Environment Set up
+05/11/2017 21:56:01 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:01 devpinoyLogger Executing Scenario : User Sets  Time Notification for the First Child to None
+05/11/2017 21:56:01 devpinoyLogger FV launched Succesfully
+05/11/2017 21:56:02 devpinoyLogger Email Entered : 
+05/11/2017 21:56:02 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:56:02 devpinoyLogger Password Entered :
+05/11/2017 21:56:02 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:56:02 devpinoyLogger Login Button Clicked
+05/11/2017 21:56:03 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:56:04 devpinoyLogger First Student Selected
+05/11/2017 21:56:06 devpinoyLogger Time Based Notification Screen launched 
+05/11/2017 21:56:06 devpinoyLogger Time Based Notification set to : None
+05/11/2017 21:56:06 devpinoyLogger Notification Setup Completed
+05/11/2017 21:56:09 devpinoyLogger Time Based Notification Screen launched 
+05/11/2017 21:56:09 devpinoyLogger Selected Radio Button Verified  : None
+05/11/2017 21:56:09 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:56:09 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:21 devpinoyLogger Test Environment Set up
+05/11/2017 21:56:21 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:21 devpinoyLogger Executing Scenario : Check Map Loads without Errors
+05/11/2017 21:56:22 devpinoyLogger FV launched Succesfully
+05/11/2017 21:56:22 devpinoyLogger Email Entered : 
+05/11/2017 21:56:22 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:56:22 devpinoyLogger Password Entered :
+05/11/2017 21:56:22 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:56:22 devpinoyLogger Login Button Clicked
+05/11/2017 21:56:23 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:56:23 devpinoyLogger Map Loaded
+05/11/2017 21:56:28 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:56:28 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:38 devpinoyLogger Test Environment Set up
+05/11/2017 21:56:38 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:38 devpinoyLogger Executing Scenario : Check Map can be Zoomed In on
+05/11/2017 21:56:38 devpinoyLogger FV launched Succesfully
+05/11/2017 21:56:38 devpinoyLogger Email Entered : 
+05/11/2017 21:56:38 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:56:39 devpinoyLogger Password Entered :
+05/11/2017 21:56:39 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:56:39 devpinoyLogger Login Button Clicked
+05/11/2017 21:56:40 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:56:40 devpinoyLogger Map Loaded
+05/11/2017 21:56:42 devpinoyLogger Zoom in is Working
+05/11/2017 21:56:45 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:56:45 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:56 devpinoyLogger Test Environment Set up
+05/11/2017 21:56:56 devpinoyLogger ----------------------------------------------------------------------
+05/11/2017 21:56:56 devpinoyLogger Executing Scenario : Check Map can be Zoomed Out on
+05/11/2017 21:56:56 devpinoyLogger FV launched Succesfully
+05/11/2017 21:56:57 devpinoyLogger Email Entered : 
+05/11/2017 21:56:57 devpinoyLogger [Email, nidhinjos@gmail.com]
+05/11/2017 21:56:57 devpinoyLogger Password Entered :
+05/11/2017 21:56:57 devpinoyLogger [Password, RlZub3YyMDE3]
+05/11/2017 21:56:57 devpinoyLogger Login Button Clicked
+05/11/2017 21:56:59 devpinoyLogger Skip Button Clicked on Tips Page
+05/11/2017 21:56:59 devpinoyLogger Map Loaded
+05/11/2017 21:57:01 devpinoyLogger zoom out is working
+05/11/2017 21:57:03 devpinoyLogger Test Environment Destroyed
+05/11/2017 21:57:03 devpinoyLogger ----------------------------------------------------------------------
