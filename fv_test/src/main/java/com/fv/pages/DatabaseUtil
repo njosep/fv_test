@@ -1,0 +1,112 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+public class DatabaseUtil {
+
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/mydatabase";
+    private static final String DB_USERNAME = "username";
+    private static final String DB_PASSWORD = "password";
+
+    public static void insertRowsIntoTable(String tableName, List<String> columnNames, List<Map<String, String>> rows) {
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
+            for (Map<String, String> row : rows) {
+                Map<String, Object> processedRow = processRowData(row, columnNames);
+                String insertQuery = generateInsertQuery(tableName, processedRow);
+                PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+                bindRowValues(preparedStatement, processedRow);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception as per your project's requirements
+        }
+    }
+
+    private static Map<String, Object> processRowData(Map<String, String> rowData, List<String> columnNames) {
+        Map<String, Object> processedRow = new HashMap<>();
+
+        for (String columnName : columnNames) {
+            String columnValue = rowData.get(columnName);
+            String columnType = rowData.get(columnNames.get(0));
+
+            Object processedValue = processValue(columnValue, columnType);
+            processedRow.put(columnName, processedValue);
+        }
+
+        return processedRow;
+    }
+
+    private static Object processValue(String value, String columnType) {
+        switch (columnType) {
+            case "uuid":
+                if (value.equalsIgnoreCase("[Generated]")) {
+                    return generateUUID();
+                }
+                break;
+            case "date":
+                // Assuming value is in the format "yyyy-MM-dd"
+                LocalDateTime localDateTime = LocalDateTime.parse(value + "T00:00:00");
+                return Timestamp.valueOf(localDateTime);
+            case "number":
+                // Parse value as a Double
+                return Double.parseDouble(value);
+            case "timestamp without tz":
+                if (value.equalsIgnoreCase("[Generated]")) {
+                    return getCurrentTimestamp();
+                }
+                break;
+        }
+        // Return value as a string by default
+        return value;
+    }
+
+    private static String generateInsertQuery(String tableName, Map<String, Object> rowData) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("INSERT INTO ").append(tableName).append(" (");
+
+        for (String columnName : rowData.keySet()) {
+            queryBuilder.append(columnName).append(", ");
+        }
+
+        queryBuilder.setLength(queryBuilder.length() - 2);
+        queryBuilder.append(") VALUES (");
+
+        for (int i = 0; i < rowData.size(); i++) {
+            queryBuilder.append("?, ");
+        }
+
+        queryBuilder.setLength(queryBuilder.length() - 2);
+        queryBuilder.append(")");
+
+        return queryBuilder.toString();
+    }
+
+    private static void bindRowValues(PreparedStatement preparedStatement, Map<String, Object> rowData) throws SQLException {
+        int parameterIndex = 1;
+        for (Object value : rowData.values()) {
+            if (value instanceof String) {
+                preparedStatement.setString(parameterIndex++, (String) value);
+            } else if (value instanceof Double) {
+                preparedStatement.setDouble(parameterIndex++, (Double) value);
+            } else if (value instanceof Timestamp) {
+                preparedStatement.setTimestamp(parameterIndex++, (Timestamp) value);
+            }
+            // Add more conditions for other data types if necessary
+        }
+    }
+
+    private static String generateUUID() {
+        return UUID.randomUUID().toString();
+    }
+
+    private static Timestamp getCurrentTimestamp() {
+        return Timestamp.valueOf(LocalDateTime.now());
+    }
+}
