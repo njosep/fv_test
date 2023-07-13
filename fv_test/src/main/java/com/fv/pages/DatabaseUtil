@@ -1,9 +1,12 @@
+import io.cucumber.datatable.DataTable;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,10 +17,15 @@ public class DatabaseUtil {
     private static final String DB_USERNAME = "username";
     private static final String DB_PASSWORD = "password";
 
-    public static void insertRowsIntoTable(String tableName, List<String> columnNames, List<Map<String, String>> rows) {
+    public static void insertRowsIntoTable(String tableName, DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+        List<String> columnNames = extractColumnNames(rows);
+        List<String> dataTypes = extractDataTypes(rows.get(1));
+
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
-            for (Map<String, String> row : rows) {
-                Map<String, Object> processedRow = processRowData(row, columnNames);
+            for (int i = 2; i < rows.size(); i++) {
+                Map<String, String> row = rows.get(i);
+                Map<String, Object> processedRow = processRowData(row, dataTypes);
                 String insertQuery = generateInsertQuery(tableName, processedRow);
                 PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
                 bindRowValues(preparedStatement, processedRow);
@@ -29,42 +37,45 @@ public class DatabaseUtil {
         }
     }
 
-    private static Map<String, Object> processRowData(Map<String, String> rowData, List<String> columnNames) {
+    private static List<String> extractColumnNames(List<Map<String, String>> rows) {
+        return List.copyOf(rows.get(0).keySet());
+    }
+
+    private static List<String> extractDataTypes(Map<String, String> dataTypeRow) {
+        return List.copyOf(dataTypeRow.values());
+    }
+
+    private static Map<String, Object> processRowData(Map<String, String> rowData, List<String> dataTypes) {
         Map<String, Object> processedRow = new HashMap<>();
 
-        for (String columnName : columnNames) {
+        int columnIndex = 0;
+        for (String columnName : rowData.keySet()) {
             String columnValue = rowData.get(columnName);
-            String columnType = rowData.get(columnNames.get(0));
+            String dataType = dataTypes.get(columnIndex);
 
-            Object processedValue = processValue(columnValue, columnType);
+            Object processedValue = processValue(columnValue, dataType);
             processedRow.put(columnName, processedValue);
+
+            columnIndex++;
         }
 
         return processedRow;
     }
 
-    private static Object processValue(String value, String columnType) {
-        switch (columnType) {
-            case "uuid":
-                if (value.equalsIgnoreCase("[Generated]")) {
-                    return generateUUID();
-                }
-                break;
-            case "date":
-                // Assuming value is in the format "yyyy-MM-dd"
-                LocalDateTime localDateTime = LocalDateTime.parse(value + "T00:00:00");
-                return Timestamp.valueOf(localDateTime);
-            case "number":
-                // Parse value as a Double
-                return Double.parseDouble(value);
-            case "timestamp without tz":
-                if (value.equalsIgnoreCase("[Generated]")) {
-                    return getCurrentTimestamp();
-                }
-                break;
+    private static Object processValue(String value, String dataType) {
+        if (dataType.equalsIgnoreCase("uuid") && value.equalsIgnoreCase("[Generated]")) {
+            return generateUUID();
+        } else if (dataType.equalsIgnoreCase("timestamp") && value.equalsIgnoreCase("[Generated]")) {
+            return getCurrentTimestamp();
+        } else if (dataType.equalsIgnoreCase("date")) {
+            // Assuming value is in the format "yyyy-MM-dd"
+            LocalDateTime localDateTime = LocalDateTime.parse(value + "T00:00:00");
+            return Timestamp.valueOf(localDateTime);
+        } else if (dataType.equalsIgnoreCase("num")) {
+            return Double.parseDouble(value);
+        } else {
+            return value;
         }
-        // Return value as a string by default
-        return value;
     }
 
     private static String generateInsertQuery(String tableName, Map<String, Object> rowData) {
