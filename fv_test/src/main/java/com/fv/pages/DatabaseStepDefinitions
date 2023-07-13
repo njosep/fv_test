@@ -1,0 +1,14 @@
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Given;
+import java.util.List;
+import java.util.Map;
+
+public class DatabaseStepDefinitions {
+
+    @Given("^a record exists in \"([^\"]*)\" table as below$")
+    public void insertRecordIntoTable(String tableName, DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+        List<String> columnNames = dataTable.topCells();
+        DatabaseUtil.insertRowsIntoTable(tableName, columnNames, rows);
+    }
+}
