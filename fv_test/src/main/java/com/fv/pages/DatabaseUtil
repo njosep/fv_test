@@ -116,6 +116,17 @@ public class DatabaseUtil {
     private static String generateUUID() {
         return UUID.randomUUID().toString();
     }
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class DateParsingExample {
+    public static void main(String[] args) {
+        String dateString = "2023-11-11";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(dateString, formatter);
+        System.out.println("Parsed date: " + date);
+    }
+}
 
     private static Timestamp getCurrentTimestamp() {
         return Timestamp.valueOf(LocalDateTime.now());
