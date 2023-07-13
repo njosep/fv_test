@@ -19,13 +19,13 @@ public class DatabaseUtil {
 
     public static void insertRowsIntoTable(String tableName, DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-        List<String> columnNames = extractColumnNames(rows);
+        List<String> columnNames = extractColumnNames(rows.get(0));
         List<String> dataTypes = extractDataTypes(rows.get(1));
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
             for (int i = 2; i < rows.size(); i++) {
                 Map<String, String> row = rows.get(i);
-                Map<String, Object> processedRow = processRowData(row, dataTypes);
+                Map<String, Object> processedRow = processRowData(row, columnNames, dataTypes);
                 String insertQuery = generateInsertQuery(tableName, processedRow);
                 PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
                 bindRowValues(preparedStatement, processedRow);
@@ -37,19 +37,19 @@ public class DatabaseUtil {
         }
     }
 
-    private static List<String> extractColumnNames(List<Map<String, String>> rows) {
-        return List.copyOf(rows.get(0).keySet());
+    private static List<String> extractColumnNames(Map<String, String> row) {
+        return List.copyOf(row.keySet());
     }
 
     private static List<String> extractDataTypes(Map<String, String> dataTypeRow) {
         return List.copyOf(dataTypeRow.values());
     }
 
-    private static Map<String, Object> processRowData(Map<String, String> rowData, List<String> dataTypes) {
+    private static Map<String, Object> processRowData(Map<String, String> rowData, List<String> columnNames, List<String> dataTypes) {
         Map<String, Object> processedRow = new HashMap<>();
 
         int columnIndex = 0;
-        for (String columnName : rowData.keySet()) {
+        for (String columnName : columnNames) {
             String columnValue = rowData.get(columnName);
             String dataType = dataTypes.get(columnIndex);
 
