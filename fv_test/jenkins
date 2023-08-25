@@ -1,0 +1,95 @@
+import net.serenitybdd.core.pages.PageObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import net.thucydides.core.annotations.DefaultUrl;
+
+@DefaultUrl("https://jenkinscore-nonprod.ccd.com/cj/login")
+public class LoginPage extends PageObject {
+
+    public void loginWithCredentials(String username, String password) {
+        $("#j_username").type(username);
+        $("#j_password").type(password);
+        $("input[name='Submit']").click();
+    }
+}
+
+
+
+import net.serenitybdd.core.pages.PageObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import java.util.List;
+
+public class JenkinsControllerPage extends PageObject {
+
+    public void navigateToController(String controllerUrl) {
+        getDriver().get(controllerUrl);
+    }
+    
+    public void triggerStaleJobs() {
+        List<WebElement> jobElements = findAll(By.xpath("//div[contains(@class, 'job')]"));
+        
+        for (WebElement jobElement : jobElements) {
+            if (shouldTriggerJob(jobElement)) {
+                triggerJob(jobElement);
+            }
+        }
+    }
+    
+    private boolean shouldTriggerJob(WebElement jobElement) {
+        WebElement buildTimeElement = jobElement.findElement(By.xpath(".//span[contains(@class, 'build-time')]"));
+        String buildTimeText = buildTimeElement.getText();
+        
+        // Parse the build time and compare with the current date
+        LocalDate lastBuildDate = LocalDate.parse(buildTimeText, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate currentDate = LocalDate.now();
+        
+        return lastBuildDate.isBefore(currentDate.minusDays(50));
+    }
+    
+    private void triggerJob(WebElement jobElement) {
+        WebElement runButton = jobElement.findElement(By.xpath(".//button[contains(@class, 'run-button')]"));
+        runButton.click();
+        
+        // Handle confirmation dialogs or notifications if needed
+    }
+}
+
+
+
+
+import net.thucydides.core.annotations.Step;
+import net.thucydides.core.steps.ScenarioSteps;
+
+public class JenkinsSteps extends ScenarioSteps {
+
+    LoginPage loginPage;
+    JenkinsControllerPage controllerPage;
+
+    @Step
+    public void loginToJenkins(String username, String password) {
+        loginPage.open();
+        loginPage.loginWithCredentials(username, password);
+    }
+
+    @Step
+    public void navigateToControllerPage(String controllerUrl) {
+        controllerPage.navigateToController(controllerUrl);
+    }
+
+    @Step
+    public void triggerStaleJobs() {
+        controllerPage.triggerStaleJobs();
+    }
+}
+
+
+Feature: Trigger Stale Jenkins Jobs
+
+  Background:
+    Given the service account user can login to access the jenkins controller for AP322555
+
+  Scenario: Trigger stale jobs
+    When the service account user navigates to the controller page for AP322555
+    And the service account user triggers any jobs that haven't run in 50 days
+    Then the jobs should be triggered successfully
