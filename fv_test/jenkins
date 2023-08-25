@@ -13,11 +13,11 @@ public class LoginPage extends PageObject {
     }
 }
 
-
-
 import net.serenitybdd.core.pages.PageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class JenkinsControllerPage extends PageObject {
@@ -26,25 +26,24 @@ public class JenkinsControllerPage extends PageObject {
         getDriver().get(controllerUrl);
     }
     
-    public void triggerStaleJobs() {
+    public void triggerStaleJobs(String apId, int days) {
         List<WebElement> jobElements = findAll(By.xpath("//div[contains(@class, 'job')]"));
         
         for (WebElement jobElement : jobElements) {
-            if (shouldTriggerJob(jobElement)) {
+            if (shouldTriggerJob(jobElement, days)) {
                 triggerJob(jobElement);
             }
         }
     }
     
-    private boolean shouldTriggerJob(WebElement jobElement) {
+    private boolean shouldTriggerJob(WebElement jobElement, int days) {
         WebElement buildTimeElement = jobElement.findElement(By.xpath(".//span[contains(@class, 'build-time')]"));
         String buildTimeText = buildTimeElement.getText();
         
-        // Parse the build time and compare with the current date
         LocalDate lastBuildDate = LocalDate.parse(buildTimeText, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate currentDate = LocalDate.now();
         
-        return lastBuildDate.isBefore(currentDate.minusDays(50));
+        return lastBuildDate.isBefore(currentDate.minusDays(days));
     }
     
     private void triggerJob(WebElement jobElement) {
@@ -54,10 +53,6 @@ public class JenkinsControllerPage extends PageObject {
         // Handle confirmation dialogs or notifications if needed
     }
 }
-
-
-
-
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
 
@@ -78,18 +73,47 @@ public class JenkinsSteps extends ScenarioSteps {
     }
 
     @Step
-    public void triggerStaleJobs() {
-        controllerPage.triggerStaleJobs();
+    public void triggerStaleJobs(String apId, int days) {
+        controllerPage.triggerStaleJobs(apId, days);
     }
 }
 
 
+import net.thucydides.core.annotations.Steps;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+
+public class JenkinsStepDefinitions {
+
+    @Steps
+    JenkinsSteps jenkinsSteps;
+
+    private String apId; // Store the AP ID for later use
+
+    @Given("^the service account user can login to access the jenkins controller for '(.+)'$")
+    public void loginToJenkins(String apId) {
+        this.apId = apId;
+        // Your logic to login using apId
+    }
+
+    @When("^the service account user navigates to the controller page$")
+    public void navigateToControllerPage() {
+        String controllerUrl = "https://jenkinscore-nonprod.ccd.com/teams-" + apId + "-nonprod/job/" + apId + "-nonprod/";
+        jenkinsSteps.navigateToControllerPage(controllerUrl);
+    }
+
+    @When("^the service account user triggers any jobs that haven't run in (\\d+) days$")
+    public void triggerStaleJobs(int days) {
+        jenkinsSteps.triggerStaleJobs(apId, days);
+    }
+}
+
 Feature: Trigger Stale Jenkins Jobs
 
   Background:
-    Given the service account user can login to access the jenkins controller for AP322555
+    Given the service account user can login to access the jenkins controller for 'AP322555'
 
   Scenario: Trigger stale jobs
-    When the service account user navigates to the controller page for AP322555
+    When the service account user navigates to the controller page
     And the service account user triggers any jobs that haven't run in 50 days
     Then the jobs should be triggered successfully
