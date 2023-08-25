@@ -25,34 +25,60 @@ public class JenkinsControllerPage extends PageObject {
     public void navigateToController(String controllerUrl) {
         getDriver().get(controllerUrl);
     }
-    
+
     public void triggerStaleJobs(String apId, int days) {
-        List<WebElement> jobElements = findAll(By.xpath("//div[contains(@class, 'job')]"));
-        
-        for (WebElement jobElement : jobElements) {
-            if (shouldTriggerJob(jobElement, days)) {
-                triggerJob(jobElement);
+        triggerJobsInFolders(apId, days, "/");
+    }
+
+    private void triggerJobsInFolders(String apId, int days, String folderPath) {
+        List<WebElement> folderElements = findAll(By.xpath("//div[@class='folder' or @class='job']"));
+
+        for (WebElement folderOrJobElement : folderElements) {
+            if (folderOrJobElement.getAttribute("class").equals("folder")) {
+                String folderName = folderOrJobElement.getText();
+                String newFolderPath = folderPath + folderName + "/";
+                folderOrJobElement.click();
+                triggerJobsInFolders(apId, days, newFolderPath);
+            } else {
+                String jobName = folderOrJobElement.getText();
+                if (shouldTriggerJob(folderOrJobElement, days)) {
+                    logJobTriggerInfo(apId, folderPath, jobName);
+                    triggerJob(folderOrJobElement);
+                }
             }
         }
+
+        // Navigate back to the previous level of folders
+        if (!folderPath.equals("/")) {
+            WebElement parentFolderElement = find(By.xpath("//div[@class='folder' and text()='" + folderPath + "']"));
+            parentFolderElement.click();
+        }
     }
-    
+
     private boolean shouldTriggerJob(WebElement jobElement, int days) {
         WebElement buildTimeElement = jobElement.findElement(By.xpath(".//span[contains(@class, 'build-time')]"));
         String buildTimeText = buildTimeElement.getText();
-        
+
         LocalDate lastBuildDate = LocalDate.parse(buildTimeText, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate currentDate = LocalDate.now();
-        
+
         return lastBuildDate.isBefore(currentDate.minusDays(days));
     }
-    
+
     private void triggerJob(WebElement jobElement) {
         WebElement runButton = jobElement.findElement(By.xpath(".//button[contains(@class, 'run-button')]"));
         runButton.click();
-        
+
         // Handle confirmation dialogs or notifications if needed
     }
+
+    private void logJobTriggerInfo(String apId, String folderPath, String jobName) {
+        String logMessage = String.format("Triggering job: %s in folder: %s for AP ID: %s",
+                jobName, folderPath, apId);
+        getLogger().info(logMessage);
+    }
 }
+
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
 
