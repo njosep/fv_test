@@ -27,36 +27,36 @@ public class JenkinsControllerPage extends PageObject {
     }
 
     public void triggerStaleJobs(String apId, int days) {
-        triggerJobsInFolders(apId, days, "/");
+        triggerJobsInTable(apId, days);
     }
 
-    private void triggerJobsInFolders(String apId, int days, String folderPath) {
-        List<WebElement> folderElements = findAll(By.xpath("//div[@class='folder' or @class='job']"));
+    private void triggerJobsInTable(String apId, int days) {
+        List<WebElement> jobRows = findAll(By.cssSelector(".projectstatus tr"));
 
-        for (WebElement folderOrJobElement : folderElements) {
-            if (folderOrJobElement.getAttribute("class").equals("folder")) {
-                String folderName = folderOrJobElement.getText();
-                String newFolderPath = folderPath + folderName + "/";
-                folderOrJobElement.click();
-                triggerJobsInFolders(apId, days, newFolderPath);
-            } else {
-                String jobName = folderOrJobElement.getText();
-                if (shouldTriggerJob(folderOrJobElement, days)) {
-                    logJobTriggerInfo(apId, folderPath, jobName);
-                    triggerJob(folderOrJobElement);
+        for (WebElement jobRow : jobRows) {
+            String rowClass = jobRow.getAttribute("class");
+            if (rowClass.contains("job-status-")) {
+                navigateIntoFolder(jobRow);
+            } else if (rowClass.contains("job-status-red") || rowClass.contains("job-status-green")) {
+                String jobName = jobRow.getText();
+                if (shouldTriggerJob(jobRow, days)) {
+                    logJobTriggerInfo(apId, jobName);
+                    triggerJob(jobRow);
                 }
             }
         }
-
-        // Navigate back to the previous level of folders
-        if (!folderPath.equals("/")) {
-            WebElement parentFolderElement = find(By.xpath("//div[@class='folder' and text()='" + folderPath + "']"));
-            parentFolderElement.click();
-        }
     }
 
-    private boolean shouldTriggerJob(WebElement jobElement, int days) {
-        WebElement buildTimeElement = jobElement.findElement(By.xpath(".//span[contains(@class, 'build-time')]"));
+    private void navigateIntoFolder(WebElement folderRow) {
+        WebElement folderLink = folderRow.findElement(By.tagName("a"));
+        folderLink.click();
+        // Add logic to handle entering the folder and looking for jobs inside
+        triggerJobsInTable(apId, days); // Recursively trigger jobs within the folder
+        getDriver().navigate().back(); // Navigate back to the parent page
+    }
+
+    private boolean shouldTriggerJob(WebElement jobRow, int days) {
+        WebElement buildTimeElement = jobRow.findElement(By.className("build-time"));
         String buildTimeText = buildTimeElement.getText();
 
         LocalDate lastBuildDate = LocalDate.parse(buildTimeText, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -65,19 +65,19 @@ public class JenkinsControllerPage extends PageObject {
         return lastBuildDate.isBefore(currentDate.minusDays(days));
     }
 
-    private void triggerJob(WebElement jobElement) {
-        WebElement runButton = jobElement.findElement(By.xpath(".//button[contains(@class, 'run-button')]"));
+    private void triggerJob(WebElement jobRow) {
+        WebElement runButton = jobRow.findElement(By.className("run-button"));
         runButton.click();
 
         // Handle confirmation dialogs or notifications if needed
     }
 
-    private void logJobTriggerInfo(String apId, String folderPath, String jobName) {
-        String logMessage = String.format("Triggering job: %s in folder: %s for AP ID: %s",
-                jobName, folderPath, apId);
+    private void logJobTriggerInfo(String apId, String jobName) {
+        String logMessage = String.format("Triggering job: %s for AP ID: %s", jobName, apId);
         getLogger().info(logMessage);
     }
 }
+
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
