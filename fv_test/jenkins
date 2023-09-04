@@ -13,6 +13,38 @@ public class LoginPage extends PageObject {
     }
 }
 
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+// Assuming you have a WebDriver instance, e.g., driver
+
+// Find the buildHistory div by its id
+WebElement buildHistoryDiv = driver.findElement(By.id("buildHistory"));
+
+// Find all the rows with class "build-row" within the buildHistory div
+List<WebElement> buildRows = buildHistoryDiv.findElements(By.className("build-row"));
+
+// Check if there is at least one "build-row" found
+if (!buildRows.isEmpty()) {
+    // Get the first row with class "build-row"
+    WebElement firstBuildRow = buildRows.get(0);
+
+    // Find the cell with class "panel build details" within the first row
+    WebElement detailsCell = firstBuildRow.findElement(By.className("panel build details"));
+
+    // Find the link within the details cell
+    WebElement link = detailsCell.findElement(By.tagName("a"));
+
+    // Get the content of the link
+    String linkText = link.getText();
+    System.out.println("Link Text: " + linkText);
+} else {
+    System.out.println("No rows with class 'build-row' found in the buildHistory div.");
+}
+
+
 import net.serenitybdd.core.pages.PageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
