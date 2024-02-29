@@ -1,134 +1,76 @@
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import io.cucumber.datatable.DataTable;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
-public class DatabaseUtil {
+public class CsvConverter {
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/mydatabase";
-    private static final String DB_USERNAME = "username";
-    private static final String DB_PASSWORD = "password";
+    public static class YourObject {
+        @CsvBindByName(column = "Name")
+        private String name;
 
-    public static void insertRowsIntoTable(String tableName, DataTable dataTable) {
-        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-        List<String> columnNames = extractColumnNames(rows.get(0));
-        List<String> dataTypes = extractDataTypes(rows.get(1));
+        @CsvBindByName(column = "Age")
+        private int age;
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
-            for (int i = 2; i < rows.size(); i++) {
-                Map<String, String> row = rows.get(i);
-                Map<String, Object> processedRow = processRowData(row, columnNames, dataTypes);
-                String insertQuery = generateInsertQuery(tableName, processedRow);
-                PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
-                bindRowValues(preparedStatement, processedRow);
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
+        @CsvBindByName(column = "Country")
+        private String country;
+
+        @CsvBindByName(column = "Occupation")
+        private String occupation;
+
+        @CsvBindByName(column = "Salary")
+        private double salary;
+
+        // Other fields, getters, and setters...
+
+        public YourObject(String name, int age, String country, String occupation, double salary) {
+            this.name = name;
+            this.age = age;
+            this.country = country;
+            this.occupation = occupation;
+            this.salary = salary;
+        }
+    }
+
+    public static String convertDataTableToCsv(DataTable dataTable) {
+        List<YourObject> dataList = dataTable.asList(YourObject.class);
+
+        try (StringWriter stringWriter = new StringWriter();
+             CSVWriter csvWriter = new CSVWriter(stringWriter, CSVWriter.DEFAULT_SEPARATOR,
+                     CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {
+
+            StatefulBeanToCsv<YourObject> beanToCsv = new StatefulBeanToCsvBuilder<YourObject>(csvWriter)
+                    .build();
+
+            beanToCsv.write(dataList);
+
+            return stringWriter.toString();
+        } catch (Exception e) {
             e.printStackTrace();
-            // Handle exception as per your project's requirements
+            return null;
         }
     }
 
-    private static List<String> extractColumnNames(Map<String, String> row) {
-        return List.copyOf(row.keySet());
-    }
-
-    private static List<String> extractDataTypes(Map<String, String> dataTypeRow) {
-        return List.copyOf(dataTypeRow.values());
-    }
-
-    private static Map<String, Object> processRowData(Map<String, String> rowData, List<String> columnNames, List<String> dataTypes) {
-        Map<String, Object> processedRow = new HashMap<>();
-
-        int columnIndex = 0;
-        for (String columnName : columnNames) {
-            String columnValue = rowData.get(columnName);
-            String dataType = dataTypes.get(columnIndex);
-
-            Object processedValue = processValue(columnValue, dataType);
-            processedRow.put(columnName, processedValue);
-
-            columnIndex++;
-        }
-
-        return processedRow;
-    }
-
-    private static Object processValue(String value, String dataType) {
-        if (dataType.equalsIgnoreCase("uuid") && value.equalsIgnoreCase("[Generated]")) {
-            return generateUUID();
-        } else if (dataType.equalsIgnoreCase("timestamp") && value.equalsIgnoreCase("[Generated]")) {
-            return getCurrentTimestamp();
-        } else if (dataType.equalsIgnoreCase("date")) {
-            // Assuming value is in the format "yyyy-MM-dd"
-            LocalDateTime localDateTime = LocalDateTime.parse(value + "T00:00:00");
-            return Timestamp.valueOf(localDateTime);
-        } else if (dataType.equalsIgnoreCase("num")) {
-            return Double.parseDouble(value);
-        } else {
-            return value;
-        }
-    }
-
-    private static String generateInsertQuery(String tableName, Map<String, Object> rowData) {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("INSERT INTO ").append(tableName).append(" (");
-
-        for (String columnName : rowData.keySet()) {
-            queryBuilder.append(columnName).append(", ");
-        }
-
-        queryBuilder.setLength(queryBuilder.length() - 2);
-        queryBuilder.append(") VALUES (");
-
-        for (int i = 0; i < rowData.size(); i++) {
-            queryBuilder.append("?, ");
-        }
-
-        queryBuilder.setLength(queryBuilder.length() - 2);
-        queryBuilder.append(")");
-
-        return queryBuilder.toString();
-    }
-
-    private static void bindRowValues(PreparedStatement preparedStatement, Map<String, Object> rowData) throws SQLException {
-        int parameterIndex = 1;
-        for (Object value : rowData.values()) {
-            if (value instanceof String) {
-                preparedStatement.setString(parameterIndex++, (String) value);
-            } else if (value instanceof Double) {
-                preparedStatement.setDouble(parameterIndex++, (Double) value);
-            } else if (value instanceof Timestamp) {
-                preparedStatement.setTimestamp(parameterIndex++, (Timestamp) value);
-            }
-            // Add more conditions for other data types if necessary
-        }
-    }
-
-    private static String generateUUID() {
-        return UUID.randomUUID().toString();
-    }
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-public class DateParsingExample {
     public static void main(String[] args) {
-        String dateString = "2023-11-11";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(dateString, formatter);
-        System.out.println("Parsed date: " + date);
-    }
-}
+        // Example usage with a DataTable
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("Name", "Age", "Country", "Occupation", "Salary"),
+                List.of("John", "25", "USA", "Engineer", "75000.00"),
+                List.of("Alice", "30", "Canada", "Doctor", "90000.00"),
+                List.of("Bob", "22", "UK", "Student", "0.00")
+        ));
 
-    private static Timestamp getCurrentTimestamp() {
-        return Timestamp.valueOf(LocalDateTime.now());
+        String csvString = convertDataTableToCsv(dataTable);
+
+        if (csvString != null) {
+            System.out.println("Generated CSV:\n" + csvString);
+        } else {
+            System.out.println("Error generating CSV.");
+        }
     }
 }
