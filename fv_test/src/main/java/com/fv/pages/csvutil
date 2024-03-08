@@ -1,59 +1,15 @@
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.BeanField;
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvRequiredFieldEmptyException;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import org.apache.commons.lang3.StringUtils;
+try (FileWriter fileWriter = new FileWriter(file);
+             CSVWriter csvWriter = new CSVWriter(fileWriter, CSVWriter.DEFAULT_SEPARATOR,
+                     CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {
 
-import java.io.StringWriter;
-import java.util.List;
+            ColumnPositionMappingStrategy<YourObject> mappingStrategy = new ColumnPositionMappingStrategy<>();
+            mappingStrategy.setType(YourObject.class);
 
-public class CsvUtils {
+            String[] columns = {"name", "age", "country", "occupation", "salary"};
+            mappingStrategy.setColumnMapping(columns);
 
-    public static StringWriter createCsv(List<Student> studentList) throws Exception {
-        StringWriter stringWriter = new StringWriter();
+            BeanToCsv<YourObject> beanToCsv = new BeanToCsv<>(mappingStrategy);
 
-        CustomMappingStrategy<Student> columnStrategy = new CustomMappingStrategy<>(Student.class);
-
-        StatefulBeanToCsv<Student> csvBuilder = new StatefulBeanToCsvBuilder<>(stringWriter)
-                .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
-                .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-                .withMappingStrategy(columnStrategy)
-                .build();
-
-        csvBuilder.write(studentList);
-        return stringWriter;
-    }
-
-    public static class CustomMappingStrategy<T> extends ColumnPositionMappingStrategy<T> {
-        public CustomMappingStrategy(Class<T> clazz) {
-            setType(clazz);
-        }
-
-        @Override
-        public String[] generateHeader(T bean) throws CsvRequiredFieldEmptyException {
-            super.generateHeader(bean);
-
-            int numColumns = getFieldMap().values().size();
-            String[] customHeader = new String[numColumns];
-
-            for (int i = 0; i < numColumns; i++) {
-                BeanField<T> beanField = findField(i);
-                customHeader[i] = extractHeaderName(beanField);
-            }
-
-            return customHeader;
-        }
-
-        private String extractHeaderName(BeanField<T> beanField) {
-            if (beanField == null || beanField.getField() == null) {
-                return StringUtils.EMPTY;
-            }
-
-            CsvBindByName bindByNameAnnotation = beanField.getField().getDeclaredAnnotation(CsvBindByName.class);
-            return bindByNameAnnotation != null ? bindByNameAnnotation.column() : StringUtils.EMPTY;
-        }
-    }
-}
+            csvWriter.writeAll(beanToCsv.write(dataList));
+            
+      
