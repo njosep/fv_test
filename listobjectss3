@@ -1,0 +1,27 @@
+ try {
+        ListObjectsV2Request request = new ListObjectsV2Request()
+                .withBucketName(bucketName)
+                .withPrefix(folderName + "/")
+                .withDelimiter("/");
+        ListObjectsV2Result result;
+
+        do {
+            result = s3Client.listObjectsV2(request);
+
+            for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+                if (objectSummary.getKey().endsWith(fileName)) {
+                    return true; // File found in the folder
+                }
+            }
+
+            // Continue listing the next batch of objects
+            request.setContinuationToken(result.getNextContinuationToken());
+        } while (result.isTruncated());
+
+        return false; // File not found in the folder
+    } catch (AmazonServiceException e) {
+        // Handle exception (e.g., connection error, permission issue)
+        e.printStackTrace();
+        return false;
+    }
+}
