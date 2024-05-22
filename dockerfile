@@ -16,4 +16,7 @@ COPY automation/wiremock/functional/__files /app/__files
 EXPOSE 8080
 
 # Command to run WireMock when the container starts
-CMD ["java", "-jar", "wiremock-standalone.jar", "--port", "8080", "--root-dir", "/app/mappings"]
+COPY keystore.jks /wiremock/keystore.jks
+
+CMD ["java", "-jar", "wiremock-standalone.jar", "--https-port", "8443", "--https-keystore", "/wiremock/keystore.jks", "--https-keystore-password", "password", "--root-dir", "/wiremock"]
+
