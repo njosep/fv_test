@@ -20,3 +20,4 @@ COPY keystore.jks /wiremock/keystore.jks
 
 CMD ["java", "-jar", "wiremock-standalone.jar", "--https-port", "8443", "--https-keystore", "/wiremock/keystore.jks", "--https-keystore-password", "password", "--root-dir", "/wiremock"]
 
+CMD ["sh", "-c", "java $DATADOG_PARAMS -cp /var/wiremock/lib/*:/var/wiremock/extensions/* com.github.tomakehurst.wiremock.standalone.WireMockServerRunner --https-port 8443 --port 8080 --verbose"
