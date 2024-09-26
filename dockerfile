@@ -15,6 +15,26 @@ COPY automation/wiremock/functional/__files /app/__files
 # Expose the port WireMock will listen on
 EXPOSE 8080
 
+Yes, you can definitely add the new JVM arguments (like heap size, metaspace size, bytecode verification, etc.) to the existing JAVA_OPTS environment variable without splitting them into multiple ENV commands. All the JVM options can be combined into a single JAVA_OPTS definition.
+
+Here’s how you can update the existing JAVA_OPTS to include all the required options in one place.
+
+Updated Dockerfile with Combined JAVA_OPTS
+Dockerfile
+Copy code
+# Start with a base WireMock image (if using OpenJDK as base)
+FROM wiremock/wiremock:3.6
+
+# Set the Java options including Datadog and additional memory and logging
+ENV JAVA_OPTS="-javaagent:/app/dd-java-agent.jar \
+    -Ddd.logs.injection=true \
+    -Ddd.trace.analytics.enabled=true \
+    -Ddd.profiling.enabled=true \
+    -Ddd.fetch.enabled=true \
+    -Xms512m -Xmx2g \
+    -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m \
+    -noverify \
+    -Xlog:gc* -Xlog:class+load=info"
 # Command to run WireMock when the container starts
 COPY keystore.jks /wiremock/keystore.jks
 
